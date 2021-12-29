@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 /* eslint-disable no-else-return */
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
@@ -35,6 +36,36 @@ class SongsService {
   // get all songs
   async getSongs() {
     const songs = await this._pool.query('SELECT id, title, performer FROM songs');
+    return songs.rows.map(mapDbToModel);
+  }
+
+  async searchSongByTitle(title) {
+    const query = {
+      text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1',
+      values: [`${title}%`],
+    };
+
+    const songs = await this._pool.query(query);
+    return songs.rows.map(mapDbToModel);
+  }
+
+  async searchSongByPerformer(performer) {
+    const query = {
+      text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1',
+      values: [`${performer}%`],
+    };
+
+    const songs = await this._pool.query(query);
+    return songs.rows.map(mapDbToModel);
+  }
+
+  async searchSongByPerformerAndTitle(performer, title) {
+    const query = {
+      text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1 AND LOWER(title) LIKE $2',
+      values: [`${performer}%`, `${title}%`],
+    };
+
+    const songs = await this._pool.query(query);
     return songs.rows.map(mapDbToModel);
   }
 

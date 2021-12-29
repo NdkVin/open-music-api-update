@@ -49,20 +49,47 @@ class SongsHandler {
   }
 
   // get all songs
-  async getSongsHandler({ query }) {
-    const { title, performer } = query;
-    console.log(title);
-    console.log(performer);
+  async getSongsHandler({ query },h) {
+    try {
+      const { title, performer } = query;
 
-    let songs = await this._services.getSongs();
+      let songs = await this._services.getSongs(query);
 
+      if (!title && performer) {
+        songs = await this._services.searchSongByPerformer(performer);
+      }
 
-    return {
-      status: 'success',
-      data: {
-        songs,
-      },
-    };
+      if (title && !performer) {
+        songs = await this._services.searchSongByTitle(title);
+      }
+
+      if (title && performer) {
+        songs = await this._services.searchSongByPerformerAndTitle(performer, title);
+      }
+      return {
+        status: 'success',
+        data: {
+          songs,
+        },
+      };
+    } catch (e) {
+      if (e instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: e.message,
+        });
+        response.code(e.statusCode);
+        return response;
+      }
+
+      const response = h.response({
+        status: 'error',
+        message: 'terjadi kesalahan di server',
+      });
+      console.log(e);
+      response.code(500);
+      return response;
+    }
   }
 
   // get song by id
