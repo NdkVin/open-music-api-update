@@ -49,7 +49,7 @@ class SongsHandler {
   }
 
   // get all songs
-  async getSongsHandler({ query },h) {
+  async getSongsHandler({ query }, h) {
     try {
       const { title, performer } = query;
 
