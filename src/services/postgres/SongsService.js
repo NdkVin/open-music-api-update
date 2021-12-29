@@ -15,7 +15,6 @@ class SongsService {
   async addSong({
     title, year, performer, genre, duration, albumId,
   }) {
-    console.log(albumId);
     const id = `song-${nanoid(16)}`;
     const insertedAt = new Date().toISOString();
     const updatedAt = insertedAt;
@@ -41,7 +40,7 @@ class SongsService {
 
   async searchSongByTitle(title) {
     const query = {
-      text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1',
+      text: 'SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE LOWER($1)',
       values: [`${title}%`],
     };
 
@@ -51,7 +50,7 @@ class SongsService {
 
   async searchSongByPerformer(performer) {
     const query = {
-      text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1',
+      text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE LOWER($1)',
       values: [`${performer}%`],
     };
 
@@ -61,7 +60,7 @@ class SongsService {
 
   async searchSongByPerformerAndTitle(performer, title) {
     const query = {
-      text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1 AND LOWER(title) LIKE $2',
+      text: 'SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE LOWER($1) AND LOWER(title) LIKE LOWER($2)',
       values: [`${performer}%`, `${title}%`],
     };
 
