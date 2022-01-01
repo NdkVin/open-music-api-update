@@ -56,6 +56,7 @@ class AlbumsHandler {
 
       if (songs.rowCount) {
         album.songs = songs.rows;
+        console.log(songs);
       }
 
       return {
@@ -88,7 +89,7 @@ class AlbumsHandler {
     try {
       this._validator.validateAlbumPayload(payload);
 
-      await this._service.editSong(payload, params);
+      await this._service.editAlbum(payload, params);
       return {
         status: 'success',
         message: 'berhasil mengupdate album',

@@ -43,7 +43,7 @@ class AlbumService {
     return result.rows[0];
   }
 
-  async editSong(payload, params) {
+  async editAlbum(payload, params) {
     const { name, year } = payload;
     const { id } = params;
 
@@ -70,7 +70,7 @@ class AlbumService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError('Tidak dapat menghapus album');
+      throw new NotFoundError('Tidak dapat menghapus album, album tidak ditemukan');
     }
   }
 }

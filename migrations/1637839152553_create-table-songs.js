@@ -24,19 +24,9 @@ exports.up = (pgm) => {
     },
     duration: {
       type: 'INTEGER',
-      noNull: true,
-    },
-    inserted_at: {
-      type: 'TEXT',
-      noNull: true,
-    },
-    updated_at: {
-      type: 'TEXT',
-      noNull: true,
     },
     album_id: {
       type: 'TEXT',
-      noNull: true,
     },
   });
 };
