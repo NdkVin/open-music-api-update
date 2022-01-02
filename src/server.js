@@ -1,6 +1,8 @@
+/* eslint-disable no-else-return */
 require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
+const ClientError = require('./exceptions/ClientError');
 
 // eslint-disable-next-line import/extensions
 // albums
@@ -42,6 +44,23 @@ const init = async () => {
       },
     },
   ]);
+
+  server.ext('onPreResponse', async ({ response }, h) => {
+    if (response instanceof ClientError) {
+      const newResponse = h.response({
+        status: 'fail',
+        message: response.message,
+      });
+      newResponse.code(response.statusCode);
+      return newResponse;
+    }
+
+    if (response instanceof Error) {
+      console.log(response);
+    }
+
+    return response.continue || response;
+  });
 
   await server.start();
   console.log(`Server sedang berjalan pada ${server.info.uri}`);
