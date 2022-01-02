@@ -75,7 +75,7 @@ class SongsService {
 
     const song = await this._pool.query(query);
 
-    if (!song.rows.length) {
+    if (!song.rowCount) {
       throw new NotFoundError('Song not found');
     }
     return song.rows.map(mapDbToModel)[0];
