@@ -32,8 +32,8 @@ class AlbumsHandler {
 
     const songs = await this._songService.getSongsByAlbum(id);
 
-    if (songs.rowCount) {
-      album.songs = songs.rows;
+    if (songs.length) {
+      album.songs = songs;
       console.log(songs);
     }
 

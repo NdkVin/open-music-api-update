@@ -1,19 +1,6 @@
 /* eslint-disable camelcase */
-const mapDbToModel = ({
-  id,
-  title,
-  year,
-  performer,
-  genre,
-  duration,
-  album_id,
-}) => ({
-  id,
-  title,
-  year,
-  performer,
-  genre,
-  duration,
+const mapDbToModel = ({ album_id, ...args }) => ({
+  ...args,
   albumId: album_id,
 });
 
