@@ -1,14 +1,17 @@
 class PlaylistsHandler {
-  constructor(service, validator, songsServices) {
+  constructor(service, validator, songsServices, playlistsongactivities) {
     this._service = service;
     this._validator = validator;
     this._songService = songsServices;
+    this._playlistsongactivities = playlistsongactivities;
+
     this.postPlaylistHandler = this.postPlaylistHandler.bind(this);
     this.getPlaylistHandler = this.getPlaylistHandler.bind(this);
     this.deletePlaylistByIdHandler = this.deletePlaylistByIdHandler.bind(this);
     this.postSongToPlaylistHandler = this.postSongToPlaylistHandler.bind(this);
     this.getSongsOnPlaylistHandler = this.getSongsOnPlaylistHandler.bind(this);
     this.deleteSongsOnPlaylistHandler = this.deleteSongsOnPlaylistHandler.bind(this);
+    this.getPlaylistActivityHandler = this.getPlaylistActivityHandler.bind(this);
   }
 
   async postPlaylistHandler({ payload, auth }, h) {
@@ -63,6 +66,7 @@ class PlaylistsHandler {
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._songService.getSongById(songId);
     await this._service.addSongToPlaylist(playlistId, songId);
+    await this._playlistsongactivities.addActivity(playlistId, songId, credentialId, 'add');
 
     const response = h.response({
       status: 'success',
@@ -101,10 +105,27 @@ class PlaylistsHandler {
 
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._service.deleteSongsOnPlaylist(songId, playlistId);
-
+    await this._playlistsongactivities.addActivity(playlistId, songId, credentialId, 'delete');
     return {
       status: 'success',
       message: 'lagu berhasil dihapus dari palylist',
+    };
+  }
+
+  async getPlaylistActivityHandler({ params, auth }) {
+    const { id: playlistId } = params;
+    const { id: credentialId } = auth.credentials;
+
+    await this._service.verifyPlaylistAccess(playlistId, credentialId);
+
+    const activities = await this._playlistsongactivities.getActivityByPlaylistId(playlistId);
+
+    return {
+      status: 'success',
+      data: {
+        playlistId,
+        activities,
+      },
     };
   }
 }
