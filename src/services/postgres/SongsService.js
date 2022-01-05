@@ -1,5 +1,4 @@
 /* eslint-disable lines-between-class-members */
-/* eslint-disable no-else-return */
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
