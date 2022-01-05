@@ -34,7 +34,6 @@ class AlbumsHandler {
 
     if (songs.length) {
       album.songs = songs;
-      console.log(songs);
     }
 
     return {

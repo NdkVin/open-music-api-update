@@ -6,11 +6,12 @@ const SongPayloadSchema = Joi.object({
     'string.empty': 'title tidak boleh kosong',
     'any.required': 'title harus diisi',
   }),
-  year: Joi.number().required().messages({
-    'number.base': 'name harus berupa number',
-    'number.empty': 'name tidak boleh kosong',
-    'any.required': 'name harus diisi',
-  }),
+  year: Joi.number().min(1900).max(2020).required()
+    .messages({
+      'number.base': 'name harus berupa number',
+      'number.empty': 'name tidak boleh kosong',
+      'any.required': 'name harus diisi',
+    }),
   performer: Joi.string().required().messages({
     'string.base': 'performer harus berupa string',
     'string.empty': 'performer tidak boleh kosong',

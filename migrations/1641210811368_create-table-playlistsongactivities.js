@@ -25,6 +25,7 @@ exports.up = (pgm) => {
     time: {
       type: 'TEXT',
       notNull: true,
+      default: pgm.func('current_timestamp'),
     },
   });
 
@@ -37,5 +38,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('collaboplaylistsongactivitiesrations');
+  pgm.dropTable('playlistsongactivities');
 };

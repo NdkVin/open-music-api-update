@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 const mapDbToModel = ({ album_id, ...args }) => ({
   ...args,
   albumId: album_id,
