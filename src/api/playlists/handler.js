@@ -31,10 +31,20 @@ class PlaylistsHandler {
     return response;
   }
 
-  async getPlaylistHandler({ auth }) {
+  async getPlaylistHandler({ auth }, h) {
     const { id: credentialId } = auth.credentials;
     const playlists = await this._service.getPlaylists(credentialId);
 
+    if (playlists.source) {
+      const response = h.response({
+        status: 'success',
+        data: {
+          playlists: playlists.data.playlists,
+        },
+      });
+      response.header('X-Data-Source', 'cache');
+      return response;
+    }
     return {
       status: 'success',
       data: {
@@ -76,13 +86,29 @@ class PlaylistsHandler {
     return response;
   }
 
-  async getSongsOnPlaylistHandler({ params, auth }) {
+  async getSongsOnPlaylistHandler({ params, auth }, h) {
     const { id: credentialId } = auth.credentials;
     const { playlistId } = params;
 
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     const { id, name, username } = await this._service.getPlaylistById(playlistId);
     const songs = await this._service.getSongsPlaylist(playlistId);
+
+    if (songs.source) {
+      const response = h.response({
+        status: 'success',
+        data: {
+          playlist: {
+            id,
+            name,
+            username,
+            songs: songs.data.songs,
+          },
+        },
+      });
+      response.header('X-Data-Source', 'cache');
+      return response;
+    }
     return {
       status: 'success',
       data: {
