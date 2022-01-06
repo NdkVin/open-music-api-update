@@ -4,11 +4,13 @@ const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 
 class LikesService {
-  constructor() {
+  constructor(cacheService) {
+    this._cacheService = cacheService;
     this._pool = new Pool();
   }
 
   async likeAlbums(albumId, userId) {
+    this._cacheService.delete(`albumlikes:${albumId}`);
     const query = {
       text: 'SELECT * from user_album_likes where album_id = $1 AND user_id = $2',
       values: [albumId, userId],
@@ -57,14 +59,28 @@ class LikesService {
   }
 
   async countLikesAlbum(albumId) {
-    const query = {
-      text: 'SELECT * from user_album_likes where album_id = $1',
-      values: [albumId],
-    };
+    try {
+      const result = await this._cacheService.get(`albumlikes:${albumId}`);
+      return JSON.parse(result);
+    } catch {
+      const query = {
+        text: 'SELECT * from user_album_likes where album_id = $1',
+        values: [albumId],
+      };
 
-    const result = await this._pool.query(query);
+      const result = await this._pool.query(query);
+      const likes = result.rowCount;
 
-    return result.rowCount;
+      const cache = {
+        source: 'cache',
+        data: {
+          likes,
+        },
+      };
+
+      await this._cacheService.set(`albumlikes:${albumId}`, JSON.stringify(cache));
+      return result.rowCount;
+    }
   }
 }
 
