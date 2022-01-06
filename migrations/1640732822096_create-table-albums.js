@@ -8,11 +8,14 @@ exports.up = (pgm) => {
     },
     name: {
       type: 'TEXT',
-      noNull: true,
+      notNull: true,
     },
     year: {
       type: 'INTEGER',
-      noNull: true,
+      notNull: true,
+    },
+    cover_url: {
+      type: 'TEXT',
     },
   });
 };

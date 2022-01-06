@@ -13,8 +13,8 @@ class AlbumService {
     const { name, year } = payload;
 
     const query = {
-      text: 'INSERT INTO albums VALUES($1, $2, $3) RETURNING id',
-      values: [id, name, year],
+      text: 'INSERT INTO albums VALUES($1, $2, $3, $4) RETURNING id',
+      values: [id, name, year, null],
     };
 
     const result = await this._pool.query(query);
@@ -71,6 +71,19 @@ class AlbumService {
 
     if (!result.rowCount) {
       throw new NotFoundError('Tidak dapat menghapus album, album tidak ditemukan');
+    }
+  }
+
+  async updateAlbumCover(filename, id) {
+    const query = {
+      text: 'UPDATE albums SET cover_url = $1 WHERE id = $2',
+      values: [filename, id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('tidak dapat menambahkan gambar');
     }
   }
 }
